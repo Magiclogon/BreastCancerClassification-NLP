@@ -1,12 +1,15 @@
 import pandas as pd
+import numpy as np
+import evaluate
 from datasets import Dataset
 from transformers import BertForSequenceClassification, Trainer, TrainingArguments, BertTokenizer
 
+# Charger le tokenizer
 model_name = "dmis-lab/biobert-v1.1"
 tokenizer = BertTokenizer.from_pretrained(model_name)
 
-# Load your dataset (CSV with 'translated_text' and 'BI-RADS' columns)
-df = pd.read_csv("C:\\Users\\Walid\\Documents\\EMI\\SEMESTRE 3\\Projet-Traitement-Texte\\dataset.csv")
+# Charger le dataset (CSV avec 'translated_text' et 'BI-RADS')
+df = pd.read_csv("dataset.csv")
 
 df = df[['translated_text', 'BI-RADS']]
 df['BI-RADS'] = df['BI-RADS'].apply(
@@ -23,43 +26,54 @@ df['BI-RADS'] = df['BI-RADS'].apply(
     )
 )
 
-# Convert to Hugging Face Dataset format
+df = df[df['BI-RADS'] != 'Unknown']  # Supprimer les valeurs inconnues
+
+# Convertir en dataset Hugging Face
 dataset = Dataset.from_pandas(df)
 
-# Split dataset into train and test
+# Diviser en train et test
 train_test_split = dataset.train_test_split(test_size=0.2)
 test_dataset = train_test_split['test']
 
-# Tokenization function
+# Fonction de tokenization
 def tokenize_and_format_function(examples):
     tokenized = tokenizer(examples['translated_text'], padding='max_length', truncation=True, max_length=512)
-    tokenized['labels'] = [label - 2 for label in examples['BI-RADS']]  # Adjust labels to start from 0
+    tokenized['labels'] = [label - 2 for label in examples['BI-RADS']]  # Ajuster les labels pour commencer à 0
     return tokenized
 
-# Tokenize the test dataset
+# Tokeniser le dataset de test
 test_dataset = test_dataset.map(tokenize_and_format_function, batched=True)
 
-# Load the fine-tuned model
+# Charger le modèle fine-tuné
 model = BertForSequenceClassification.from_pretrained('./biobert_finetuned', num_labels=8)
 
-# Define the evaluation arguments
+# Définir la fonction de calcul de l'accuracy
+metric = evaluate.load("accuracy")
+
+def compute_metrics(eval_pred):
+    logits, labels = eval_pred
+    predictions = np.argmax(logits, axis=-1)
+    return metric.compute(predictions=predictions, references=labels)
+
+# Définir les arguments d'évaluation
 training_args = TrainingArguments(
-    output_dir='./results',          # Output directory
-    per_device_eval_batch_size=16,   # Batch size for evaluation
-    no_cuda=False,                   # Set to True if you don't want to use GPU
+    output_dir='./results',          # Répertoire de sortie
+    per_device_eval_batch_size=16,   # Taille du batch pour l'évaluation
+    no_cuda=False,                   # Utiliser GPU si disponible
 )
 
-# Define the Trainer
+# Définir le Trainer
 trainer = Trainer(
-    model=model,                         # The trained model to evaluate
-    args=training_args,                  # Evaluation arguments
-    eval_dataset=test_dataset,           # Test dataset
-    tokenizer=tokenizer,                 # Tokenizer for encoding input text
+    model=model,                         # Modèle entraîné à évaluer
+    args=training_args,                  # Arguments d'évaluation
+    eval_dataset=test_dataset,           # Dataset de test
+    tokenizer=tokenizer,                 # Tokenizer pour encoder les textes
+    compute_metrics=compute_metrics,     # Ajout du calcul d'accuracy
 )
 
-# Evaluate the model
-print("Evaluation started")
+# Évaluer le modèle
+print("Évaluation en cours...")
 evaluation_results = trainer.evaluate()
 
-# Print the evaluation results
-print("Evaluation results:", evaluation_results)
+# Afficher les résultats de l'évaluation
+print("Résultats de l'évaluation:", evaluation_results)

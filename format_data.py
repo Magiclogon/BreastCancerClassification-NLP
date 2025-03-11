@@ -5,7 +5,7 @@ from googletrans import Translator
 
 folder_path = "Dataset"
 dataset_path = "dataset.csv"
-pattern = r"BI-RADS\s*[-:]?\s*(\d+[A-Za-z]?)"
+pattern = r"BI-RADS\s*-?\s*(\d+[A-Za-z]?)"
 translator = Translator()
 
 def extract_result(text):
