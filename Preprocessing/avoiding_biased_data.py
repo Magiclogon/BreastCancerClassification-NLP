@@ -25,7 +25,7 @@ from datasets import Dataset
 """
 
 
-dataset_path = ".\\Preprocessing\\dataset.csv"
+dataset_path = "./Preprocessing/dataset.csv"
 df = pd.read_csv(dataset_path)
 
 majority_class = df[df['BI-RADS'] == '2']
