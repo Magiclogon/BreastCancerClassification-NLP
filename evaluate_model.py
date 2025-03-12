@@ -3,13 +3,14 @@ import numpy as np
 import evaluate
 from datasets import Dataset
 from transformers import BertForSequenceClassification, Trainer, TrainingArguments, BertTokenizer
+from Preprocessing.avoiding_biased_data import balanced_df
 
 # Charger le tokenizer
 model_name = "emilyalsentzer/Bio_ClinicalBERT"
 tokenizer = BertTokenizer.from_pretrained(model_name)
 
 # Charger le dataset (CSV avec 'translated_text' et 'BI-RADS')
-df = pd.read_csv("dataset.csv")
+df = balanced_df
 
 df = df[['translated_text', 'BI-RADS']]
 df['BI-RADS'] = df['BI-RADS'].apply(

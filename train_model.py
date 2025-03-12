@@ -1,6 +1,7 @@
 import pandas as pd
 from datasets import Dataset
 from transformers import BertForSequenceClassification, Trainer, TrainingArguments, BertTokenizer
+from Preprocessing.avoiding_biased_data import balanced_df
 import torch
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -9,7 +10,7 @@ print(f"Using device: {device}")
 model_name = "emilyalsentzer/Bio_ClinicalBERT"
 tokenizer = BertTokenizer.from_pretrained(model_name)
 
-df = pd.read_csv("dataset.csv")
+df = balanced_df
 
 df = df[['translated_text', 'BI-RADS']]
 df['BI-RADS'] = df['BI-RADS'].apply(

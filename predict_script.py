@@ -36,12 +36,10 @@ def predict_birads(report_text):
     return birads_mapping.get(predicted_class, 'Unknown')
 
 report = """
-Doente observada a 2010 01 com antecedentes de mastectomia direita.
-O estudo mamográfico efectuado à mama esquerda, não são aparentes imagens de opacidades
-nodulares que sugiram malignidade, agrupamentos de microcalcificações suspeitas, nem
-outros sinais sugestivos de processo neoplásico ou recidiva.
-
-Achados imagiológicos benignos - Bi-Rads - 2.
+Patient treated in 2009 02. The imaging study documents a nodule located in the left breast QSE with a diameter of 6 cm.
+An ultrasound-guided microbiopsy was performed, in which 4 fragments were collected for anatomopathological study.
+A lymph node axillary aspiration biopsy was performed.
+Preoperative carbon marking was also performed.
 """
 
 predicted_birads = predict_birads(report)
