@@ -5,7 +5,7 @@ from datasets import Dataset
 from transformers import BertForSequenceClassification, Trainer, TrainingArguments, BertTokenizer
 
 # Charger le tokenizer
-model_name = "dmis-lab/biobert-v1.1"
+model_name = "emilyalsentzer/Bio_ClinicalBERT"
 tokenizer = BertTokenizer.from_pretrained(model_name)
 
 # Charger le dataset (CSV avec 'translated_text' et 'BI-RADS')
@@ -45,7 +45,7 @@ def tokenize_and_format_function(examples):
 test_dataset = test_dataset.map(tokenize_and_format_function, batched=True)
 
 # Charger le modèle fine-tuné
-model = BertForSequenceClassification.from_pretrained('./biobert_finetuned', num_labels=8)
+model = BertForSequenceClassification.from_pretrained('./clinical_biobert_finetuned', num_labels=8)
 
 # Définir la fonction de calcul de l'accuracy
 metric = evaluate.load("accuracy")

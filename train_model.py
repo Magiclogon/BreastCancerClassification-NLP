@@ -3,7 +3,10 @@ from datasets import Dataset
 from transformers import BertForSequenceClassification, Trainer, TrainingArguments, BertTokenizer
 import torch
 
-model_name = "dmis-lab/biobert-v1.1"
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"Using device: {device}")
+
+model_name = "emilyalsentzer/Bio_ClinicalBERT"
 tokenizer = BertTokenizer.from_pretrained(model_name)
 
 df = pd.read_csv("dataset.csv")
@@ -37,14 +40,13 @@ print("Processing done!")
 def tokenize_and_format_function(examples):
     tokenized = tokenizer(examples['translated_text'], padding='max_length', truncation=True, max_length=512)
     tokenized['labels'] = [label - 2 for label in examples['BI-RADS']]
-
     return tokenized
 
 train_dataset = train_dataset.map(tokenize_and_format_function, batched=True)
 test_dataset = test_dataset.map(tokenize_and_format_function, batched=True)
 
 # Charger le modèle
-model = BertForSequenceClassification.from_pretrained(model_name, num_labels=8)
+model = BertForSequenceClassification.from_pretrained(model_name, num_labels=8).to(device)
 print("Modèle chargé")
 
 # Define training arguments
@@ -74,6 +76,6 @@ print("Entrainement commencé")
 trainer.train()
 
 # Save the model
-model.save_pretrained('./biobert_finetuned')
-tokenizer.save_pretrained('./biobert_finetuned')
+model.save_pretrained('./clinical_biobert_finetuned')
+tokenizer.save_pretrained('./clinical_biobert_finetuned')
 

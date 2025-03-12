@@ -1,9 +1,10 @@
 from transformers import BertForSequenceClassification, BertTokenizer
 import torch
+import sys
 
 # Charger le modèle
-model = BertForSequenceClassification.from_pretrained('./biobert_finetuned', num_labels=8)
-tokenizer = BertTokenizer.from_pretrained("./biobert_finetuned")
+model = BertForSequenceClassification.from_pretrained('./clinical_biobert_finetuned', num_labels=8)
+tokenizer = BertTokenizer.from_pretrained("./clinical_biobert_finetuned")
 
 
 # Predictions fnction
@@ -35,10 +36,12 @@ def predict_birads(report_text):
     return birads_mapping.get(predicted_class, 'Unknown')
 
 report = """
-Nodular area with approximately 3 cm in diameter, suspicious, right breast, QII.
-Normal axilla.
-MB - 5 fragments.
-Changes with high suspicion of malignancy - Bi-Rads - 4c.
+Doente observada a 2010 01 com antecedentes de mastectomia direita.
+O estudo mamográfico efectuado à mama esquerda, não são aparentes imagens de opacidades
+nodulares que sugiram malignidade, agrupamentos de microcalcificações suspeitas, nem
+outros sinais sugestivos de processo neoplásico ou recidiva.
+
+Achados imagiológicos benignos - Bi-Rads - 2.
 """
 
 predicted_birads = predict_birads(report)
