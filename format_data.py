@@ -5,7 +5,7 @@ from googletrans import Translator
 
 folder_path = "Dataset"
 dataset_path = "./Preprocessing/dataset.csv"
-pattern = r"BI-RADS\s*-?\s*(\d+[A-Za-z]?)"
+pattern = r"BI-RADS\s*-?\s*(\d\w?)"
 translator = Translator()
 
 def extract_result(text):
@@ -25,10 +25,13 @@ def translate_text(text):
         return text
 
 def removing_bi_rads(text):
-    pattern = r"-?\s*Bi\s*-\s*Rads\s*-\s*\d\w?.?$"
-    sub_string = re.findall(pattern , text, re.IGNORECASE)
-    sub_string = sub_string[-1] if len(sub_string) else ""
-    return text.replace(sub_string,"")
+    pattern = r"-?\s*Bi\s*-\s*Rads\s*-\s*\d\w?.?"
+    sub_strings = re.findall(pattern , text, re.IGNORECASE)
+    temp = text
+    for sub_string in sub_strings:
+        temp=temp.replace(sub_string,"")
+
+    return temp
 
 data = []
 i = 0
