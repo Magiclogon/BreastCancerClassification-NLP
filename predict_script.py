@@ -1,14 +1,21 @@
 from transformers import BertForSequenceClassification, BertTokenizer
 import torch
-import sys
+from googletrans import Translator, LANGUAGES
 
 # Charger le modèle
 model = BertForSequenceClassification.from_pretrained('./clinical_biobert_finetuned', num_labels=8)
 tokenizer = BertTokenizer.from_pretrained("./clinical_biobert_finetuned")
-
+translator = Translator()
 
 # Predictions fnction
 def predict_birads(report_text):
+    # Traduction avant la prédiction
+    detected_lang = translator.detect(report_text).lang.split('-')[0]
+    if detected_lang != 'en':
+        report_text = translator.translate(report_text, src=detected_lang, dest='en').text
+
+    print("Translated...")
+
     # Tokenize the input report
     inputs = tokenizer(report_text, padding=True, truncation=True, max_length=512, return_tensors="pt")
     model.eval()
@@ -18,7 +25,7 @@ def predict_birads(report_text):
         outputs = model(**inputs)
         logits = outputs.logits
 
-    # Get the predicted label (index with highest score)
+    # Get the predicted label (index with the highest score)
     predicted_class = torch.argmax(logits, dim=-1).item()
 
     birads_mapping = {
@@ -36,10 +43,15 @@ def predict_birads(report_text):
     return birads_mapping.get(predicted_class, 'Unknown')
 
 report = """
-Patient treated in 2009 02. The imaging study documents a nodule located in the left breast QSE with a diameter of 6 cm.
-An ultrasound-guided microbiopsy was performed, in which 4 fragments were collected for anatomopathological study.
-A lymph node axillary aspiration biopsy was performed.
-Preoperative carbon marking was also performed.
+Doente observada a 2010 01.
+
+Os estudos mamográfico e ecográfico documentam área nodular localizada na transição dos
+quadrantes internos da mama esquerda com 15 mm de diâmetro, de achados suspeitos de
+malignidade.
+Efectuou-se microbiopsia ecoguiada onde foram colhidos 4 fragmentos, para estudo anatomopatológico.
+Axila positiva. Efectuou-se biopsia aspirativa glanglio-axilar.
+
+Achados imagiológicos muito sugestivos de malignidade - Bi-Rads - 5.
 """
 
 predicted_birads = predict_birads(report)
