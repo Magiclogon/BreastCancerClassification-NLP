@@ -2,3 +2,5 @@
 /clinical_biobert_finetuned/
 /results/
 /clinical_biobert_args_finetuned
+/modern_bert_finetuned
+evaluation_results.txt

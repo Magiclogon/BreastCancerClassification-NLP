@@ -2,12 +2,12 @@ import pandas as pd
 import numpy as np
 import evaluate
 from datasets import Dataset
-from transformers import BertForSequenceClassification, Trainer, TrainingArguments, BertTokenizer
+from transformers import BertForSequenceClassification, Trainer, TrainingArguments, BertTokenizer, AutoTokenizer
 from Preprocessing.avoiding_biased_data import balanced_df
 
 # Charger le tokenizer
-model_name = "emilyalsentzer/Bio_ClinicalBERT"
-tokenizer = BertTokenizer.from_pretrained(model_name)
+model_name = "answerdotai/ModernBERT-base"
+tokenizer = AutoTokenizer.from_pretrained(model_name)
 
 # Charger le dataset (CSV avec 'translated_text' et 'BI-RADS')
 df = balanced_df
@@ -33,7 +33,7 @@ df = df[df['BI-RADS'] != 'Unknown']  # Supprimer les valeurs inconnues
 dataset = Dataset.from_pandas(df)
 
 # Diviser en train et test
-train_test_split = dataset.train_test_split(test_size=0.2)
+train_test_split = dataset.train_test_split(test_size=0.99)
 test_dataset = train_test_split['test']
 
 # Fonction de tokenization
@@ -46,7 +46,7 @@ def tokenize_and_format_function(examples):
 test_dataset = test_dataset.map(tokenize_and_format_function, batched=True)
 
 # Charger le modèle fine-tuné
-model = BertForSequenceClassification.from_pretrained('./clinical_biobert_finetuned', num_labels=8)
+model = BertForSequenceClassification.from_pretrained('./modern_bert_finetuned', num_labels=8)
 
 # Définir la fonction de calcul de l'accuracy
 metric = evaluate.load("accuracy")
@@ -59,7 +59,7 @@ def compute_metrics(eval_pred):
 # Définir les arguments d'évaluation
 training_args = TrainingArguments(
     output_dir='./results',          # Répertoire de sortie
-    per_device_eval_batch_size=16,   # Taille du batch pour l'évaluation
+    per_device_eval_batch_size=1,   # Taille du batch pour l'évaluation
     no_cuda=False,                   # Utiliser GPU si disponible
 )
 
