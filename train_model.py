@@ -7,7 +7,7 @@ import torch
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
 
-model_name = "emilyalsentzer/Bio_ClinicalBERT"
+model_name = "answerdotai/ModernBERT-base"
 tokenizer = BertTokenizer.from_pretrained(model_name)
 
 df = balanced_df
@@ -77,6 +77,6 @@ print("Entrainement commencé")
 trainer.train()
 
 # Save the model
-model.save_pretrained('./clinical_biobert_finetuned')
-tokenizer.save_pretrained('./clinical_biobert_finetuned')
+model.save_pretrained('./modern_bert_finetuned')
+tokenizer.save_pretrained('./modern_bert_finetuned')
 

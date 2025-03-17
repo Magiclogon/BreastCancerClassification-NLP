@@ -1,10 +1,10 @@
-from transformers import BertForSequenceClassification, BertTokenizer
+from transformers import BertForSequenceClassification, PreTrainedTokenizerFast, AutoTokenizer, AutoModel
 import torch
 from googletrans import Translator, LANGUAGES
 
 # Charger le modèle
-model = BertForSequenceClassification.from_pretrained('./clinical_biobert_finetuned', num_labels=8)
-tokenizer = BertTokenizer.from_pretrained("./clinical_biobert_finetuned")
+model = BertForSequenceClassification.from_pretrained('./modern_bert_finetuned', num_labels=8)
+tokenizer = PreTrainedTokenizerFast.from_pretrained("./modern_bert_finetuned")
 translator = Translator()
 
 # Predictions fnction
