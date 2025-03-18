@@ -77,6 +77,6 @@ print("Entrainement commencé")
 trainer.train()
 
 # Save the model
-model.save_pretrained('./clinical_biobert_finetuned')
-tokenizer.save_pretrained('./clinical_biobert_finetuned')
+model.save_pretrained('./backend/clinical_biobert_finetuned')
+tokenizer.save_pretrained('./backend/clinical_biobert_finetuned')
 
