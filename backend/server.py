@@ -4,6 +4,11 @@ import torch
 from transformers import BertTokenizer, BertForSequenceClassification
 
 
+"""
+    run the server with the command : uvicorn ./backend/server.py:app --host 0.0.0.0 --port 8000
+
+"""
+
 app = FastAPI()
 
 # Load model and tokenizer once
