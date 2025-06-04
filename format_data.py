@@ -4,7 +4,7 @@ import re
 from googletrans import Translator
 
 folder_path = "Dataset"
-dataset_path = "./Preprocessing/dataset.csv"
+dataset_path = "./Preprocessing/dataset_tabular.csv"
 pattern = r"BI-RADS\s*-?\s*(\d+[A-Za-z]?)"
 translator = Translator()
 

@@ -1,6 +1,6 @@
 import pandas as pd
 from datasets import Dataset
-from transformers import BertForSequenceClassification, Trainer, TrainingArguments, BertTokenizer
+from transformers import BertForSequenceClassification, Trainer, TrainingArguments, BertTokenizer, AutoTokenizer
 from Preprocessing.avoiding_biased_data import balanced_df
 import torch
 
@@ -8,7 +8,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
 
 model_name = "answerdotai/ModernBERT-base"
-tokenizer = BertTokenizer.from_pretrained(model_name)
+tokenizer = AutoTokenizer.from_pretrained(model_name)
 
 df = balanced_df
 
