@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.utils import resample
 from datasets import Dataset
 
-dataset_path = "./Preprocessing/dataset.csv"
+dataset_path = "./Preprocessing/dataset_tabular.csv"
 df = pd.read_csv(dataset_path)
 
 target_size = 250
